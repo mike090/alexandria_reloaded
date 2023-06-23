@@ -1,0 +1,38 @@
+---
+
+require:
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.2
+  DisplayCopNames: true
+  SuggestExtensions: false
+  Exclude:
+    - 'bin/**'
+    - 'db/schema.rb'
+    - 'db/migrate/**'
+    - 'db/seeds.rb'
+
+Style/Documentation:
+  Enabled: false
+Naming/VariableNumber:
+  CheckSymbols: false
+RSpec/NestedGroups:
+  Max: 5
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Max: 7
+  Exclude:
+    - 'spec/features/**'
+RSpec/ExampleLength:
+  Max: 12
+  Exclude:
+    - 'spec/features/**'
+RSpec/ContextWording:
+  Include:
+    - cheks for
+RSpec/RepeatedExample:
+  Exclude:
+    - 'spec/policies/**'
