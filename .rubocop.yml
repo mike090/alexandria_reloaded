@@ -36,3 +36,6 @@ RSpec/ContextWording:
 RSpec/RepeatedExample:
   Exclude:
     - 'spec/policies/**'
+RSpec/VerifiedDoubles:
+  Exclude:
+    - 'spec/presenters/base_presenter_spec.rb'
