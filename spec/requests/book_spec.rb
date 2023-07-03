@@ -50,5 +50,68 @@ RSpec.describe Book do
         end
       end
     end
+
+    describe 'pagination' do
+      let(:page_size) { 1 }
+      let(:first_page_link) { "<http://www.example.com/api/books?page=1&per=#{page_size}>; rel=\"first\"" }
+      let(:last_page_link) { "<http://www.example.com/api/books?page=3&per=#{page_size}>; rel=\"last\"" }
+      let(:prev_page_link) { "<http://www.example.com/api/books?page=#{page - 1}&per=#{page_size}>; rel=\"prev\"" }
+      let(:next_page_link) { "<http://www.example.com/api/books?page=#{page + 1}&per=#{page_size}>; rel=\"next\"" }
+
+      before { get "/api/books?page=#{page}&per=#{page_size}" }
+
+      context 'when asking for the first page' do
+        let(:page) { 1 }
+        let(:links) { [next_page_link, last_page_link].join(', ') }
+
+        it 'returns collection with requested size' do
+          expect(response).to have_http_status(:ok)
+          expect(response_data.size).to eq(page_size)
+        end
+
+        it 'returns the "next" and "last" links' do
+          expect(response.headers['Links']).to eq(links)
+        end
+      end
+
+      context 'when asking for the second page' do
+        let(:page) { 2 }
+
+        let(:links) { [first_page_link, prev_page_link, next_page_link, last_page_link].join(', ') }
+
+        it 'returns collection with one item' do
+          expect(response).to have_http_status(:ok)
+          expect(response_data.size).to eq(page_size)
+        end
+
+        it 'returns all four navigation links' do
+          expect(response.headers['Links']).to eq(links)
+        end
+      end
+
+      context 'when asking for the last page' do
+        let(:page) { 3 }
+
+        let(:links) { [first_page_link, prev_page_link].join(', ') }
+
+        it 'returns collection with one item' do
+          expect(response).to have_http_status(:ok)
+          expect(response_data.size).to eq(page_size)
+        end
+
+        it 'returns only the "first" and "prev" links' do
+          expect(response.headers['Links']).to eq(links)
+        end
+      end
+
+      context "when sending invalid 'page' and 'per' parameters" do
+        let(:page) { 'fake' }
+
+        it 'returns HTTP status 422 with error description' do
+          expect(response).to have_http_status :unprocessable_entity
+          expect(json_body['error']['invalid_params']).to eq('page=fake')
+        end
+      end
+    end
   end
 end

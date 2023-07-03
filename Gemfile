@@ -8,6 +8,7 @@ ruby '3.2.0'
 gem 'bootsnap', require: false
 gem 'carrierwave', '~> 2.2.4'
 gem 'carrierwave-base64', '~> 2.10.0'
+gem 'kaminari', '~> 1.2.2'
 gem 'puma', '~> 5.0'
 gem 'rails', '~> 7.0.5'
 gem 'sqlite3', '~> 1.4'

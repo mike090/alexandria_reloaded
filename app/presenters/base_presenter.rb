@@ -1,13 +1,26 @@
 # frozen_string_literal: true
 
 class BasePresenter
-  @build_attributes = []
+  CLASS_ATTRIBUTES = {
+    build_with: :build_attributes,
+    related_to: :relations,
+    sort_by: :sort_attributes,
+    filter_by: :filter_attributes
+  }.freeze
+
+  CLASS_ATTRIBUTES.each_value { |variable| instance_variable_set("@#{variable}", []) }
 
   class << self
-    attr_reader :build_attributes
+    attr_reader(*CLASS_ATTRIBUTES.values)
 
-    def build_with(*build_attrs)
-      @build_attributes = build_attrs
+    CLASS_ATTRIBUTES.except(:build_with).each do |method_name, variable|
+      define_method method_name do |*args|
+        instance_variable_set("@#{variable}", args.map(&:to_s))
+      end
+    end
+
+    def build_with(*args)
+      @build_attributes = args.map(&:to_s)
       @build_attributes.each do |attribute|
         define_method(attribute.to_sym) { @model.send(attribute) }
       end

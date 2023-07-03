@@ -19,14 +19,35 @@ RSpec.describe BasePresenter do
 
     before { described_class.build_with(*build_attributes) }
 
-    it 'stores arguments in "build_attributes" attribute' do
-      expect(described_class.build_attributes).to eq(%i[id title])
+    it 'stores the correct values' do
+      expect(described_class.build_attributes).to eq(%w[id title])
     end
 
     it 'defined read attributes methods' do
       build_attributes.each do |attribute|
         expect(presenter).to respond_to(attribute)
       end
+    end
+  end
+
+  describe '.related_to' do
+    it 'stores the correct values' do
+      described_class.related_to :author, :publisher
+      expect(described_class.relations).to eq(%w[author publisher])
+    end
+  end
+
+  describe '.sort_by' do
+    it 'stores the correct values' do
+      described_class.sort_by :id, :title
+      expect(described_class.sort_attributes).to eq(%w[id title])
+    end
+  end
+
+  describe '.filter_by' do
+    it 'stores the correct values' do
+      described_class.filter_by :title
+      expect(described_class.filter_attributes).to eq(%w[title])
     end
   end
 

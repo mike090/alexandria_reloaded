@@ -19,7 +19,7 @@ class FieldPicker
   def validated_fields
     return nil if @fields.blank?
 
-    validated = @fields.split(',').map(&:to_sym) & pickable
+    validated = @fields.split(',') & pickable
     validated.any? ? validated : nil
   end
 
