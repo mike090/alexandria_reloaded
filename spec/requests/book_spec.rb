@@ -10,13 +10,16 @@ RSpec.describe Book do
   let(:books) { [ruby_microscope, rails_tutorial, agile_web_dew] }
 
   describe 'GET /api/books' do
-    before { books }
+    let(:params) { {} }
+    let(:query) { params.any? ? "?#{params.to_param}" : '' }
+
+    before do
+      books
+      get "/api/books#{query}"
+    end
 
     context 'default behavior' do
-      before { get '/api/books' }
-
       it 'returns HTTP status OK' do
-        get '/api/books'
         expect(response).to have_http_status(:ok)
       end
 
@@ -31,7 +34,7 @@ RSpec.describe Book do
 
     describe 'field picking' do
       context 'with the "fields" parameter' do
-        before { get '/api/books?fields=id,title,author_id' }
+        let(:params) { { fields: 'id,title,author_id' } }
 
         it 'returns books with only the requested fields' do
           response_data.each do |book|
@@ -41,8 +44,6 @@ RSpec.describe Book do
       end
 
       context 'without the "fields" parameter' do
-        before { get '/api/books' }
-
         it 'returns books with all the fields specified in the presenter' do
           response_data.each do |book|
             expect(book.keys).to eq(BookPresenter.build_attributes.map(&:to_s))
@@ -58,7 +59,7 @@ RSpec.describe Book do
       let(:prev_page_link) { "<http://www.example.com/api/books?page=#{page - 1}&per=#{page_size}>; rel=\"prev\"" }
       let(:next_page_link) { "<http://www.example.com/api/books?page=#{page + 1}&per=#{page_size}>; rel=\"next\"" }
 
-      before { get "/api/books?page=#{page}&per=#{page_size}" }
+      let(:params) { { page:, per: page_size } }
 
       context 'when asking for the first page' do
         let(:page) { 1 }
@@ -110,6 +111,75 @@ RSpec.describe Book do
         it 'returns HTTP status 422 with error description' do
           expect(response).to have_http_status :unprocessable_entity
           expect(json_body['error']['invalid_params']).to eq('page=fake')
+        end
+      end
+    end
+
+    describe 'sorting' do
+      context 'with valid sorting params' do
+        let(:sorted) do
+          response_data.map { |book| book[sort_by] }
+        end
+        let(:expected) { described_class.order(params.values.join(' ')).map(&sort_by.to_sym) }
+
+        context 'without dir parameter' do
+          let(:sort_by) { 'title' }
+          let(:params) { { sort: sort_by } }
+
+          it 'returns a sorted data' do
+            expect(response).to have_http_status :ok
+            expect(sorted).to eq(expected)
+          end
+        end
+
+        context 'with dir parameter' do
+          let(:sort_by) { 'title' }
+          let(:params) { { sort: sort_by, dir: 'desc' } }
+
+          it 'returns a sorted data' do
+            expect(response).to have_http_status :ok
+            expect(sorted).to eq(expected)
+          end
+        end
+      end
+
+      context 'with invalid sorting params' do
+        context 'when invalid column name' do
+          let(:params) { { sort: 'fake' } }
+
+          it 'returns an error with invalid parameters' do
+            expect(response).to have_http_status :unprocessable_entity
+            expect(json_body['error']['invalid_params']).to eq('sort=fake')
+          end
+        end
+
+        context 'when invalid direction' do
+          let(:params) { { sort: 'title', dir: 'fake' } }
+
+          it 'returns an error with invalid parameters' do
+            expect(response).to have_http_status :unprocessable_entity
+            expect(json_body['error']['invalid_params']).to eq('dir=fake')
+          end
+        end
+      end
+    end
+
+    describe 'filtering' do
+      context 'with valid filtering param' do
+        let(:params) { { q: { title_cont: 'Microscope' } } }
+
+        it 'returns filtred data' do
+          expect(response).to have_http_status :ok
+          expect(response_data.size).to eq(1)
+        end
+      end
+
+      context 'with invalid filtering param' do
+        let(:params) { { q: { foo_cont: :bar } } }
+
+        it 'returns an error with invalid parameters' do
+          expect(response).to have_http_status :unprocessable_entity
+          expect(json_body['error']['invalid_params']).to eq('q[foo_cont]=bar')
         end
       end
     end

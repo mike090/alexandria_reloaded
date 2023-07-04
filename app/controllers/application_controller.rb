@@ -14,10 +14,18 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def filter(scope)
+    Filter.new(scope, request.query_parameters).filter
+  end
+
   def paginate(scope)
     @paginator ||= Paginator.new(scope, request.query_parameters)
     response.headers['Links'] = navigation_links
     @paginator.paginate
+  end
+
+  def sort(scope)
+    Sorter.new(scope, request.query_parameters).sort
   end
 
   def current_url
