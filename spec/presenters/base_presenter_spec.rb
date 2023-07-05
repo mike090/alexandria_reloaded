@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BasePresenter do
-  subject(:presenter) { described_class.new(model) }
+  subject(:presenter) { described_class.new(model, {}) }
 
   let(:model) { 'fake' }
 
@@ -16,6 +16,7 @@ RSpec.describe BasePresenter do
 
   describe '.build_with' do
     let(:build_attributes) { %i[id title] }
+    let(:model) { spy(title: 'White Fang') }
 
     before { described_class.build_with(*build_attributes) }
 
@@ -28,12 +29,27 @@ RSpec.describe BasePresenter do
         expect(presenter).to respond_to(attribute)
       end
     end
+
+    it 'read attributes value from model' do
+      expect(presenter.title).to eq('White Fang')
+      expect(model).to have_received(:title)
+    end
   end
 
   describe '.related_to' do
+    let(:model) { instance_double(Book) }
+
+    before do
+      allow(model).to receive(:author).and_return('Jack London')
+      described_class.related_to :author
+    end
+
     it 'stores the correct values' do
-      described_class.related_to :author, :publisher
-      expect(described_class.relations).to eq(%w[author publisher])
+      expect(described_class.relations).to eq(%w[author])
+    end
+
+    it 'defines read relations methods for instance' do
+      expect(presenter.author).to eq('Jack London')
     end
   end
 
@@ -48,42 +64,6 @@ RSpec.describe BasePresenter do
     it 'stores the correct values' do
       described_class.filter_by :title
       expect(described_class.filter_attributes).to eq(%w[title])
-    end
-  end
-
-  describe 'read attributes methods' do
-    context 'default behavior' do
-      subject(:presenter) { Class.new(described_class).tap { |cls| cls.build_with :field }.new(model) }
-
-      context 'when model have the attribute' do
-        let(:model) { spy(field: 'Model Value') }
-
-        it 'read attributes from model' do
-          expect(presenter.field).to eq('Model Value')
-          expect(model).to have_received(:field)
-        end
-      end
-
-      context "when the model doesn't have attribute" do
-        let(:model) { 'fake' }
-
-        it 'raise error' do
-          expect { presenter.field }.to raise_error NoMethodError
-        end
-      end
-    end
-
-    context 'when presenter redefine attribute' do
-      subject(:presenter) do
-        Class.new(described_class).tap do |cls|
-          cls.build_with :field
-          cls.define_method(:field) { 'Presenter Value' }
-        end.new(model)
-      end
-
-      it 'returns redifined value' do
-        expect(presenter.field).to eq('Presenter Value')
-      end
     end
   end
 end

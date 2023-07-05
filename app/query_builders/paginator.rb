@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Paginator
-  def initialize(scope, query_params)
-    @query_params = query_params
-    @page = validate_param!('page', @query_params['page']) || 1
-    @page_size = validate_param!('per', @query_params['per']) || 10
+  def initialize(scope, params)
+    @params = params
+    @page = validate_param!('page', @params['page']) || 1
+    @page_size = validate_param!('per', @params['per']) || 10
     @scope = scope.page(@page).per(@page_size)
   end
 

@@ -33,7 +33,7 @@ RSpec.describe Book do
     end
 
     describe 'field picking' do
-      context 'with the "fields" parameter' do
+      context 'with valid "fields" parameter' do
         let(:params) { { fields: 'id,title,author_id' } }
 
         it 'returns books with only the requested fields' do
@@ -48,6 +48,15 @@ RSpec.describe Book do
           response_data.each do |book|
             expect(book.keys).to eq(BookPresenter.build_attributes.map(&:to_s))
           end
+        end
+      end
+
+      context 'with invalid "fields" parameter' do
+        let(:params) { { fields: 'fid,title,author_id' } }
+
+        it 'returns HTTP status 422 with error description' do
+          expect(response).to have_http_status :unprocessable_entity
+          expect(json_body['error']['invalid_params']).to eq('fields=fid')
         end
       end
     end
@@ -180,6 +189,27 @@ RSpec.describe Book do
         it 'returns an error with invalid parameters' do
           expect(response).to have_http_status :unprocessable_entity
           expect(json_body['error']['invalid_params']).to eq('q[foo_cont]=bar')
+        end
+      end
+    end
+
+    describe 'embed picking' do
+      context 'with valid "embed" parameter' do
+        let(:params) { { include: :author } }
+
+        it 'returns data with embedded entity' do
+          response_data.each do |book|
+            expect(book['author']).to include(*AuthorPresenter.build_attributes)
+          end
+        end
+      end
+
+      context 'with invalid "embed" parameter' do
+        let(:params) { { embed: 'fake,author' } }
+
+        it 'returns HTTP status 422 with error description' do
+          expect(response).to have_http_status :unprocessable_entity
+          expect(json_body['error']['invalid_params']).to eq('embed=fake')
         end
       end
     end

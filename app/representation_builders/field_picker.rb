@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class FieldPicker
-  def initialize(presenter, fields = '')
+  def initialize(presenter)
     @presenter = presenter
-    @fields = fields
+    @fields = @presenter.params['fields'].blank? ? pickable : validate_fields(@presenter.params['fields'])
   end
 
   def pick
-    (validated_fields || pickable).each do |field|
+    @fields.each do |field|
       value = @presenter.send(field)
       @presenter.data[field] = value
     end
@@ -16,14 +16,19 @@ class FieldPicker
 
   private
 
-  def validated_fields
-    return nil if @fields.blank?
-
-    validated = @fields.split(',') & pickable
-    validated.any? ? validated : nil
+  def validate_fields(fields)
+    verifiable = fields.split(',')
+    invalid = verifiable - pickable
+    error!(invalid) unless invalid.empty?
+    verifiable
   end
 
   def pickable
     @presenter.class.build_attributes
+  end
+
+  def error!(fields)
+    raise RepresentationBuilderError.new("fields=#{fields.join(',')}"),
+          "Invalid Field Pick. Allowed fields: #{@presenter.class.build_attributes.join(',')}"
   end
 end
