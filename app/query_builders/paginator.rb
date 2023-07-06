@@ -12,17 +12,6 @@ class Paginator
     @scope
   end
 
-  def navigation_params
-    @navigation_params ||= begin
-      params = {}
-      params[:first] = { 'page' => 1, 'per' => @scope.limit_value } unless @scope.first_page?
-      params[:prev] = { 'page' => @scope.prev_page, 'per' => @scope.limit_value } if @scope.prev_page
-      params[:next] = { 'page' => @scope.next_page, 'per' => @scope.limit_value } if @scope.next_page
-      params[:last] = { 'page' => @scope.total_pages, 'per' => @scope.limit_value } unless @scope.last_page?
-      params
-    end
-  end
-
   private
 
   def validate_param!(param_name, value)

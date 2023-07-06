@@ -3,6 +3,7 @@
 class BooksController < ApplicationController
   def index
     books = orchestrate_query(Book.all)
+    embed_page_navigation(books)
     serializer = Alexandria::Serializer.new(data: books,
                                             params: request.query_parameters,
                                             actions: %i[pick_fields pick_embeds])
