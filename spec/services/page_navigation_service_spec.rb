@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe PageNavigationService do
   describe '#navigation' do
-    subject(:service) { described_class.new(scope) }
+    subject(:service) { described_class.new(scope, '/some_path', { anything: :else }) }
 
     let(:ruby_microscope) { create(:ruby_microscope) }
     let(:rails_tutorial) { create(:ruby_on_rails_tutorial) }
@@ -23,8 +23,8 @@ RSpec.describe PageNavigationService do
           it 'returns the "next" and "last" params' do
             expect(service.navigation).to eq(
               {
-                next: { 'page' => 2, 'per' => 1 },
-                last: { 'page' => 3, 'per' => 1 }
+                next: '/some_path?anything=else&page=2&per=1',
+                last: '/some_path?anything=else&page=3&per=1'
               }
             )
           end
@@ -36,10 +36,10 @@ RSpec.describe PageNavigationService do
           it 'returns all returns all four params' do
             expect(service.navigation).to eq(
               {
-                first: { 'page' => 1, 'per' => 1 },
-                prev: { 'page' => 1, 'per' => 1 },
-                next: { 'page' => 3, 'per' => 1 },
-                last: { 'page' => 3, 'per' => 1 }
+                first: '/some_path?anything=else&page=1&per=1',
+                prev: '/some_path?anything=else&page=1&per=1',
+                next: '/some_path?anything=else&page=3&per=1',
+                last: '/some_path?anything=else&page=3&per=1'
               }
             )
           end
@@ -51,8 +51,8 @@ RSpec.describe PageNavigationService do
           it 'returns only the "first" and "prev" params' do
             expect(service.navigation).to eq(
               {
-                first: { 'page' => 1, 'per' => 1 },
-                prev: { 'page' => 2, 'per' => 1 }
+                first: '/some_path?anything=else&page=1&per=1',
+                prev: '/some_path?anything=else&page=2&per=1'
               }
             )
           end
@@ -65,8 +65,8 @@ RSpec.describe PageNavigationService do
         it 'returns only the "first" and "last" params' do
           expect(service.navigation).to eq(
             {
-              first: { 'page' => 1, 'per' => 1 },
-              last: { 'page' => 3, 'per' => 1 }
+              first: '/some_path?anything=else&page=1&per=1',
+              last: '/some_path?anything=else&page=3&per=1'
             }
           )
         end

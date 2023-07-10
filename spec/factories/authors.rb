@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :author do
+  factory :author, aliases: [:pat_shaughnessy] do
     given_name { 'Pat' }
     family_name { 'Shaughnessy' }
   end
