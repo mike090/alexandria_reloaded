@@ -67,4 +67,8 @@ class BasePresenter
   def as_json(*)
     @data
   end
+
+  protected
+
+  attr_reader :model
 end

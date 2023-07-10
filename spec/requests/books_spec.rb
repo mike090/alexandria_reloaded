@@ -21,7 +21,7 @@ RSpec.describe Book do
     include_examples 'fields picking', pick_fields: %i[id title author_id]
     include_examples 'pagination'
     include_examples 'sorting', sort_by: :title
-    include_examples 'filtering', attribute: :id, predicate: :eq, value: 1, expected_count: 1
+    include_examples 'filtering', attribute: :title, predicate: :eq, value: 'Ruby on Rails Tutorial', expected_count: 1
     include_examples 'embed picking', embed: 'author,publisher'
   end
 

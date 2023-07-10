@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_23_141726) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_10_162754) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "authors", force: :cascade do |t|
     t.string "given_name"
     t.string "family_name"
@@ -36,6 +39,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_23_141726) do
     t.index ["isbn_13"], name: "index_books_on_isbn_13"
     t.index ["publisher_id"], name: "index_books_on_publisher_id"
     t.index ["title"], name: "index_books_on_title"
+  end
+
+  create_table "pg_search_documents", force: :cascade do |t|
+    t.text "content"
+    t.string "searchable_type"
+    t.bigint "searchable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
   end
 
   create_table "publishers", force: :cascade do |t|

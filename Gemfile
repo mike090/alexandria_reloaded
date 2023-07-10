@@ -9,9 +9,10 @@ gem 'bootsnap', require: false
 gem 'carrierwave', '~> 2.2.4'
 gem 'carrierwave-base64', '~> 2.10.0'
 gem 'kaminari', '~> 1.2.2'
+gem 'pg', '~> 1.4.6'
+gem 'pg_search', '~> 2.3.6'
 gem 'puma', '~> 5.0'
 gem 'rails', '~> 7.0.5'
-gem 'sqlite3', '~> 1.4'
 
 group :development, :test do
   gem 'byebug'

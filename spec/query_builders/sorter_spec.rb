@@ -24,7 +24,7 @@ RSpec.describe Sorter do
       let(:params) { { 'sort' => 'title', 'dir' => 'desc' } }
 
       it 'returns sorted scope' do
-        expect(sorted.map(&:id)).to eq(scope.order(:title, :desc).map(&:id))
+        expect(sorted.map(&:id)).to eq(scope.order('title desc').map(&:id))
       end
     end
 
