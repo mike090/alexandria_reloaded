@@ -9,19 +9,26 @@ RSpec.describe 'Search' do
   let(:books) { [ruby_microscope, rails_tutorial, agile_web_dev] }
 
   describe 'GET /api/search/:text' do
-    before { books }
+    before do
+      books
+      get '/api/search/ruby', headers:
+    end
 
-    context 'with text = ruby' do
-      before { get '/api/search/ruby' }
+    include_examples 'when unauthorized'
 
-      it 'returns the correct search result' do
-        expect(response).to have_http_status :ok
-        expect(response_data[0]['searchable_id']).to eq ruby_microscope.id
-        expect(response_data[0]['searchable_type']).to eq('Book')
-        expect(response_data[1]['searchable_id']).to eq rails_tutorial.id
-        expect(response_data[1]['searchable_type']).to eq('Book')
-        expect(response_data[2]['searchable_id']).to eq(agile_web_dev.author_id)
-        expect(response_data[2]['searchable_type']).to eq('Author')
+    context 'with authentication' do
+      include_context 'authenticate client'
+
+      context 'with text = ruby' do
+        it 'returns the correct search result' do
+          expect(response).to have_http_status :ok
+          expect(response_data[0]['searchable_id']).to eq ruby_microscope.id
+          expect(response_data[0]['searchable_type']).to eq('Book')
+          expect(response_data[1]['searchable_id']).to eq rails_tutorial.id
+          expect(response_data[1]['searchable_type']).to eq('Book')
+          expect(response_data[2]['searchable_id']).to eq(agile_web_dev.author_id)
+          expect(response_data[2]['searchable_type']).to eq('Author')
+        end
       end
     end
   end
