@@ -66,4 +66,13 @@ RSpec.describe BasePresenter do
       expect(described_class.filter_attributes).to eq(%w[title])
     end
   end
+
+  describe 'class methods' do
+    it 'returns an empty array while it not assigned' do
+      subject = Class.new(described_class)
+      BasePresenter::CLASS_METHODS.each_key do |method|
+        expect(subject.send(method)).to eq([])
+      end
+    end
+  end
 end

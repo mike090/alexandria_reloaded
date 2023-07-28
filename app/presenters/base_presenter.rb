@@ -3,35 +3,34 @@
 class BasePresenter
   include Rails.application.routes.url_helpers
 
-  CLASS_ATTRIBUTES = {
+  CLASS_METHODS = {
     build_with: :build_attributes,
     related_to: :relations,
     sort_by: :sort_attributes,
     filter_by: :filter_attributes
   }.freeze
 
-  CLASS_ATTRIBUTES.each_value { |variable| instance_variable_set("@#{variable}", []) }
-
   class << self
-    attr_reader(*CLASS_ATTRIBUTES.values)
+    CLASS_METHODS.each_value do |attr_name|
+      define_method attr_name do
+        instance_variable_set("@#{attr_name}", []) unless instance_variable_defined?("@#{attr_name}")
+        instance_variable_get("@#{attr_name}")
+      end
+    end
 
-    CLASS_ATTRIBUTES.except(:build_with, :related_to).each do |method_name, variable|
+    CLASS_METHODS.except(:build_with, :related_to).each do |method_name, variable|
       define_method method_name do |*args|
         instance_variable_set("@#{variable}", args.map(&:to_s))
       end
     end
 
-    def build_with(*args)
-      @build_attributes = args.map(&:to_s)
-      @build_attributes.each do |attribute|
-        define_method(attribute.to_sym) { @model.send(attribute) }
-      end
-    end
-
-    def related_to(*args)
-      @relations = args.map(&:to_s)
-      @relations.each do |relation|
-        define_method(relation.to_sym) { @model.send(relation) }
+    %i[build_with related_to].each do |method_name|
+      define_method method_name do |*args|
+        attr_name = CLASS_METHODS[method_name]
+        instance_variable_set("@#{attr_name}", args.map(&:to_s))
+        args.each do |attribute|
+          define_method(attribute.to_sym) { @model.send(attribute) }
+        end
       end
     end
   end
