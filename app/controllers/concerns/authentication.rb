@@ -5,6 +5,16 @@ module Authentication
   extend ActiveSupport::Concern
 
   AUTH_SCHEME = 'Alexandria-Token'
+  NIL_CREDENTIALS = {
+    'api_key' => {
+      'id' => nil,
+      'key' => nil
+    },
+    'access_token' => {
+      'user_id' => nil,
+      'token' => nil
+    }
+  }.freeze
 
   included do
     before_action :validate_auth_scheme
@@ -33,14 +43,12 @@ module Authentication
   end
 
   def credentials
-    @credentials ||= begin
-      nil_cedentials =
-        { 'api_key' => { 'id' => nil, 'key' => nil }, 'access_token' => { 'user_id' => nil, 'token' => nil } }
-      nil_cedentials.deep_merge(
-        authorization_request.scan(/(\w+)[:=] ?"?([\w|:]+)"?/).to_h.slice(*nil_cedentials.keys).to_h do |key, values|
-          [key, nil_cedentials[key].keys.zip(values.split(':')).to_h]
-        end
-      )
+    @credentials ||= NIL_CREDENTIALS.deep_merge(request_credentials)
+  end
+
+  def request_credentials
+    authorization_request.scan(/(\w+)[:=] ?"?([\w|:]+)"?/).to_h.slice(*NIL_CREDENTIALS.keys).to_h do |key, values|
+      [key, NIL_CREDENTIALS[key].keys.zip(values.split(':')).to_h]
     end
   end
 
