@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Resource Author' do
-  include ResourceHelpers
-
   let(:headers) { {} }
 
   describe 'GET /api/authors' do

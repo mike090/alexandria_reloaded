@@ -5,6 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.0'
 
+gem 'bcrypt', '~> 3.1.18'
 gem 'bootsnap', require: false
 gem 'carrierwave', '~> 2.2.4'
 gem 'carrierwave-base64', '~> 2.10.0'
@@ -30,6 +31,7 @@ end
 
 group :test do
   gem 'database_cleaner', '~> 2.0.2'
+  gem 'email_spec', '~> 2.2.2'
   gem 'shoulda-matchers', '~> 5.3.0'
   gem 'webmock', '~> 3.18.1'
 end

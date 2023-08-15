@@ -1,0 +1,6 @@
+en:
+  activemodel:
+    errors:
+      messages:
+        email_confirmed: Email confirmed
+        email_not_found: Email not found

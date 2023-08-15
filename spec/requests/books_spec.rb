@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Resource Book' do
-  include ResourceHelpers
-
   let(:headers) { {} }
 
   describe 'GET /api/books' do
