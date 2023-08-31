@@ -1,0 +1,196 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/tokens
+    body:
+      encoding: UTF-8
+      string: card[number]=4000000000000002&card[exp_month]=6&card[exp_year]=2028&card[cvc]=314
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/9.1.0
+      Authorization:
+      - Bearer sk_test_51N1OV2L2O6eMjhLxBkY2vpceOIU5aPwOyQnm4tuLLJN4vGCSRzMmAkXDR9WO6ubSbAQKlLr6LYO56MEMXmRF2HU300YYy93pFZ
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_aqJtUIt6iSsYNK","request_duration_ms":1078}}'
+      Stripe-Version:
+      - '2023-08-16'
+      X-Stripe-Client-User-Agent:
+      - '{"bindings_version":"9.1.0","lang":"ruby","lang_version":"3.2.0 p0 (2022-12-25)","platform":"x86_64-linux","engine":"ruby","publisher":"stripe","uname":"Linux
+        version 5.15.0-83-generic (buildd@lcy02-amd64-046) (gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1)
+        9.4.0, GNU ld (GNU Binutils for Ubuntu) 2.34) #92~20.04.1-Ubuntu SMP Mon Aug
+        21 14:00:49 UTC 2023","hostname":"LM-Tolstogo"}'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 11 Sep 2023 08:47:20 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '801'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Idempotency-Key:
+      - 79b89b51-1925-4c9d-98be-0a23e6734d97
+      Original-Request:
+      - req_N8oAAgnrYgTJtU
+      Request-Id:
+      - req_N8oAAgnrYgTJtU
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-08-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "tok_1Np5m8L2O6eMjhLx7FbFYN1K",
+          "object": "token",
+          "card": {
+            "id": "card_1Np5m8L2O6eMjhLxwKI4VYts",
+            "object": "card",
+            "address_city": null,
+            "address_country": null,
+            "address_line1": null,
+            "address_line1_check": null,
+            "address_line2": null,
+            "address_state": null,
+            "address_zip": null,
+            "address_zip_check": null,
+            "brand": "Visa",
+            "country": "US",
+            "cvc_check": "unchecked",
+            "dynamic_last4": null,
+            "exp_month": 6,
+            "exp_year": 2028,
+            "fingerprint": "FkKamfZUuBjpL2Xl",
+            "funding": "credit",
+            "last4": "0002",
+            "metadata": {},
+            "name": null,
+            "tokenization_method": null,
+            "wallet": null
+          },
+          "client_ip": "176.194.237.231",
+          "created": 1694422040,
+          "livemode": false,
+          "type": "card",
+          "used": false
+        }
+  recorded_at: Mon, 11 Sep 2023 08:47:20 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/charges
+    body:
+      encoding: UTF-8
+      string: amount=299&currency=USD&source=tok_1Np5m8L2O6eMjhLx7FbFYN1K&metadata[purchase_id]=2&description=Charge+for+Ruby+Under+a+Microscope+%28Purchase+ID+2
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/9.1.0
+      Authorization:
+      - Bearer sk_test_51N1OV2L2O6eMjhLxBkY2vpceOIU5aPwOyQnm4tuLLJN4vGCSRzMmAkXDR9WO6ubSbAQKlLr6LYO56MEMXmRF2HU300YYy93pFZ
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_N8oAAgnrYgTJtU","request_duration_ms":470}}'
+      Stripe-Version:
+      - '2023-08-16'
+      X-Stripe-Client-User-Agent:
+      - '{"bindings_version":"9.1.0","lang":"ruby","lang_version":"3.2.0 p0 (2022-12-25)","platform":"x86_64-linux","engine":"ruby","publisher":"stripe","uname":"Linux
+        version 5.15.0-83-generic (buildd@lcy02-amd64-046) (gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1)
+        9.4.0, GNU ld (GNU Binutils for Ubuntu) 2.34) #92~20.04.1-Ubuntu SMP Mon Aug
+        21 14:00:49 UTC 2023","hostname":"LM-Tolstogo"}'
+      Idempotency-Key:
+      - 2023-09-11 11:47:19 +0300/2/2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 402
+      message: Payment Required
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 11 Sep 2023 08:47:20 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '366'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Idempotency-Key:
+      - 2023-09-11 11:47:19 +0300/2/2
+      Original-Request:
+      - req_xI98UiDl3sHZhR
+      Request-Id:
+      - req_xI98UiDl3sHZhR
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-08-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |
+        {
+          "error": {
+            "charge": "ch_3Np5m8L2O6eMjhLx1YTLyaEt",
+            "code": "card_declined",
+            "decline_code": "generic_decline",
+            "doc_url": "https://stripe.com/docs/error-codes/card-declined",
+            "message": "Your card was declined.",
+            "request_log_url": "https://dashboard.stripe.com/test/logs/req_xI98UiDl3sHZhR?t=1694422040",
+            "type": "card_error"
+          }
+        }
+  recorded_at: Mon, 11 Sep 2023 08:47:20 GMT
+recorded_with: VCR 6.2.0

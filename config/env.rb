@@ -1,0 +1,4 @@
+# frozen_string_literal: true
+
+ENV['STRIPE_API_KEY'] =
+  'sk_test_51N1OV2L2O6eMjhLxBkY2vpceOIU5aPwOyQnm4tuLLJN4vGCSRzMmAkXDR9WO6ubSbAQKlLr6LYO56MEMXmRF2HU300YYy93pFZ'

@@ -306,32 +306,32 @@ RSpec.describe 'Resource Author' do
         include_examples 'when not authorized'
       end
 
-      # context 'when authorized' do
-      # 	let(:user) { :admin }
+      context 'when authorized' do
+        let(:user) { :admin }
 
-      #   context 'with valid parameters' do
-      #     it 'updates db record and returns updated resource' do
-      #       expect(response).to have_http_status :ok
-      #       author.reload
-      #       expect(author.attributes.symbolize_keys).to include(update_params)
-      #       expect(response_data['id']).to eq(id)
-      #       expect(response_data.keys).to eq(AuthorPresenter.build_attributes)
-      #     end
-      #   end
+        context 'with valid parameters' do
+          it 'updates db record and returns updated resource' do
+            expect(response).to have_http_status :ok
+            author.reload
+            expect(author.attributes.symbolize_keys).to include(update_params)
+            expect(response_data['id']).to eq(id)
+            expect(response_data.keys).to eq(AuthorPresenter.build_attributes)
+          end
+        end
 
-      #   context 'with invalid parameters' do
-      #     let(:update_params) { { family_name: '' } }
+        context 'with invalid parameters' do
+          let(:update_params) { { family_name: '' } }
 
-      #     it 'does not update db record and returns an error with details' do
-      #       expect(response).to have_http_status :unprocessable_entity
-      #       author.reload
-      #       expect(author.attributes.symbolize_keys).not_to include(update_params)
-      #       expect(json_body['error']['invalid_params'].symbolize_keys).to include(:family_name)
-      #     end
-      #   end
+          it 'does not update db record and returns an error with details' do
+            expect(response).to have_http_status :unprocessable_entity
+            author.reload
+            expect(author.attributes.symbolize_keys).not_to include(update_params)
+            expect(json_body['error']['invalid_params'].symbolize_keys).to include(:family_name)
+          end
+        end
 
-      #   include_examples 'when resource not exists'
-      # end
+        include_examples 'when resource not exists'
+      end
     end
   end
 

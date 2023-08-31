@@ -67,38 +67,33 @@ RSpec.describe 'Access Tokens Requests' do
     end
   end
 
-  # describe 'DELETE /api/access_tokens' do
-  #   before { delete access_tokens_path, headers: }
+  describe 'DELETE /api/access_tokens' do
+    context 'with valid API key' do
+      before { authenticate_client }
 
-  #   context 'with valid API key' do
-  #     include_context 'authenticate client'
+      context 'with valid access token' do
+        it 'destroys the access token' do
+          access_token = authenticate_user
+          delete(access_tokens_path, headers:)
+          expect(response).to have_http_status :no_content
+          expect(AccessToken.find_by(id: access_token.id)).to be_nil
+        end
+      end
 
-  #     context 'with valid access token' do
-  #       include_context 'authenticate user'
+      context 'with invalid access token' do
+        it 'returns HTTP status Unauthorized' do
+          headers['HTTP_AUTHORIZATION'] << 'access_token=1:fake_token'
+          delete(access_tokens_path, headers:)
+          expect(response).to have_http_status :unauthorized
+        end
+      end
+    end
 
-  #       it 'destroys the access token' do
-  #         expect(response).to have_http_status :no_content
-  #         expect(AccessToken.find_by(id: access_token.id)).to be_nil
-  #       end
-  #     end
-
-  #     context 'with invalid access token' do
-  #       let(:headers) do
-  #         super().clone.tap do |headers|
-  #           headers['HTTP_AUTHORIZATION'] = "#{headers['HTTP_AUTHORIZATION']} access_token=1:fake_token"
-  #         end
-  #       end
-
-  #       it 'returns HTTP status Unauthorized' do
-  #         expect(response).to have_http_status :unauthorized
-  #       end
-  #     end
-  #   end
-
-  #   context 'with invalid API key' do
-  #     it 'returns HTTP status Unauthorized' do
-  #       expect(response).to have_http_status :unauthorized
-  #     end
-  #   end
-  # end
+    context 'with invalid API key' do
+      it 'returns HTTP status Unauthorized' do
+        delete(access_tokens_path, headers:)
+        expect(response).to have_http_status :unauthorized
+      end
+    end
+  end
 end

@@ -19,6 +19,7 @@ module Helpers
     api_key = create(api_key) if api_key.is_a?(Symbol)
     headers['HTTP_AUTHORIZATION'] << 'Alexandria-Token'
     headers['HTTP_AUTHORIZATION'] << { api_key: "#{api_key.id}:#{api_key.key}" }
+    api_key
   end
 
   def authenticate_user(api_key: nil, user: nil, access_token: nil)
@@ -29,6 +30,7 @@ module Helpers
 
     access_token ||= try(:access_token) || create_access_token(api_key:, user:)
     headers['HTTP_AUTHORIZATION'] << "access_token=#{access_token.user_id}:#{access_token.generate_token}"
+    access_token
   end
 
   RSpec.configure do |conf|

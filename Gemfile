@@ -10,16 +10,19 @@ gem 'bootsnap', require: false
 gem 'carrierwave', '~> 2.2.4'
 gem 'carrierwave-base64', '~> 2.10.0'
 gem 'kaminari', '~> 1.2.2'
+gem 'money-rails', '~> 1.15.0'
 gem 'pg', '~> 1.4.6'
 gem 'pg_search', '~> 2.3.6'
 gem 'puma', '~> 5.0'
 gem 'pundit', '~> 2.3.1'
 gem 'rails', '~> 7.0.5'
+gem 'stripe', '~> 9.1.0'
 
 group :development, :test do
   gem 'byebug'
   gem 'factory_bot_rails', '~> 6.2.0'
   gem 'rspec-rails', '~> 6.0.1'
+  gem 'vcr', '~> 6.2.0'
 end
 
 group :development do
