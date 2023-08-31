@@ -2,10 +2,10 @@
 
 FactoryBot.define do
   factory :user do
-    email { 'john@example.com' }
+    email { Faker::Internet.email }
     password { 'password' }
-    given_name { 'John' }
-    family_name { 'Doe' }
+    given_name { Faker::Name.first_name }
+    family_name { Faker::Name.last_name }
     role { :user }
 
     trait :confirmation_redirect_url do
@@ -34,5 +34,13 @@ FactoryBot.define do
       reset_password_redirect_url { 'http://example.com' }
       reset_password_sent_at { Time.now }
     end
+  end
+
+  factory :admin, class: 'User' do
+    email { 'admin@example.com' }
+    password { 'password' }
+    given_name { 'Bob' }
+    family_name { 'Marley' }
+    role { :admin }
   end
 end

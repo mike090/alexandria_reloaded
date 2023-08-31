@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class PublishersController < ApplicationController
+  before_action :authenticate_user, only: %i[create update destroy]
+  before_action :authorize_action
+
   def index
     publishers = orchestrate_query(Publisher.all)
     embed_page_navigation(publishers)
@@ -38,6 +41,8 @@ class PublishersController < ApplicationController
   def publisher
     @publisher ||= Publisher.find(params[:id])
   end
+
+  alias resource publisher
 
   def publisher_params
     params.require(:data).permit(:name)

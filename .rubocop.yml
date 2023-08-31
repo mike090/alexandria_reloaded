@@ -19,7 +19,7 @@ Style/Documentation:
 Naming/VariableNumber:
   CheckSymbols: false
 RSpec/NestedGroups:
-  Max: 5
+  Max: 6
 RSpec/MultipleMemoizedHelpers:
   Enabled: false
 RSpec/MultipleExpectations:

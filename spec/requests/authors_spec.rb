@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Resource Author' do
-  let(:headers) { {} }
+  include_context 'headers'
 
   describe 'GET /api/authors' do
     let(:authors) do
@@ -18,13 +18,19 @@ RSpec.describe 'Resource Author' do
 
     before do
       authors
-      get "/api/authors#{query}", headers:
     end
 
-    include_examples 'when unauthorized'
+    context 'without authentication' do
+      before { get "#{authors_path}#{query}", headers: }
+
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
+      before do
+        authenticate_client
+        get "#{authors_path}#{query}", headers:
+      end
 
       describe 'default behavior' do
         it 'returns all resources' do
@@ -198,12 +204,17 @@ RSpec.describe 'Resource Author' do
     let(:author) { create(:author) }
     let(:id) { author.id }
 
-    before { get "/api/authors/#{id}", headers: }
+    context 'without authentication' do
+      before { get "/api/authors/#{id}" }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
+      before do
+        authenticate_client
+        get "/api/authors/#{id}", headers:
+      end
 
       context 'when author exists' do
         it 'returns the requested author' do
@@ -221,35 +232,51 @@ RSpec.describe 'Resource Author' do
     let(:params) { { data: author_attributes } }
     let(:author_attributes) { attributes_for(:author) }
 
-    before { post '/api/authors', params:, headers: }
+    context 'without authentication' do
+      before { post authors_path, params:, headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'with valid parameters' do
-        it 'adds a record to db and returns created resource with location' do
-          expect(response).to have_http_status :created
-          created = Author.find_by(**author_attributes)
-          expect(created).not_to be_nil
-          expect(response_data['id']).to eq(created.id)
-          expect(response_data.keys).to eq(AuthorPresenter.build_attributes)
-          expect(response.headers['Location']).to eq(
-            "http://www.example.com/api/authors/#{created.id}"
-          )
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        post authors_path, params:, headers:
       end
 
-      context 'with invalid parameters' do
-        let(:author_attributes) { attributes_for(:author).merge(family_name: '') }
+      context 'when not authorized' do
+        let(:user) { :user }
 
-        it 'does not add a record to db, returns HTTP status 422 with error details' do
-          expect(response).to have_http_status :unprocessable_entity
-          expect(Author.find_by(**author_attributes)).to be_nil
-          expect(json_body['error']['invalid_params'].symbolize_keys).to(
-            include(:family_name)
-          )
+        include_examples 'when not authorized'
+      end
+
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'with valid parameters' do
+          it 'adds a record to db and returns created resource with location' do
+            expect(response).to have_http_status :created
+            created = Author.find_by(**author_attributes)
+            expect(created).not_to be_nil
+            expect(response_data['id']).to eq(created.id)
+            expect(response_data.keys).to eq(AuthorPresenter.build_attributes)
+            expect(response.headers['Location']).to eq(
+              "http://www.example.com/api/authors/#{created.id}"
+            )
+          end
+        end
+
+        context 'with invalid parameters' do
+          let(:author_attributes) { attributes_for(:author).merge(family_name: '') }
+
+          it 'does not add a record to db, returns HTTP status 422 with error details' do
+            expect(response).to have_http_status :unprocessable_entity
+            expect(Author.find_by(**author_attributes)).to be_nil
+            expect(json_body['error']['invalid_params'].symbolize_keys).to(
+              include(:family_name)
+            )
+          end
         end
       end
     end
@@ -260,35 +287,51 @@ RSpec.describe 'Resource Author' do
     let(:id) { author.id }
     let(:update_params) { { family_name: 'Updated!' } }
 
-    before { patch "/api/authors/#{id}", params: { data: update_params }, headers: }
+    context 'without authentication' do
+      before { patch(author_path(id), params: { data: update_params }, headers:) }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'with valid parameters' do
-        it 'updates db record and returns updated resource' do
-          expect(response).to have_http_status :ok
-          author.reload
-          expect(author.attributes.symbolize_keys).to include(update_params)
-          expect(response_data['id']).to eq(id)
-          expect(response_data.keys).to eq(AuthorPresenter.build_attributes)
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        patch(author_path(id), params: { data: update_params }, headers:)
       end
 
-      context 'with invalid parameters' do
-        let(:update_params) { { family_name: '' } }
+      context 'when not authorized' do
+        let(:user) { :user }
 
-        it 'does not update db record and returns an error with details' do
-          expect(response).to have_http_status :unprocessable_entity
-          author.reload
-          expect(author.attributes.symbolize_keys).not_to include(update_params)
-          expect(json_body['error']['invalid_params'].symbolize_keys).to include(:family_name)
-        end
+        include_examples 'when not authorized'
       end
 
-      include_examples 'when resource not exists'
+      # context 'when authorized' do
+      # 	let(:user) { :admin }
+
+      #   context 'with valid parameters' do
+      #     it 'updates db record and returns updated resource' do
+      #       expect(response).to have_http_status :ok
+      #       author.reload
+      #       expect(author.attributes.symbolize_keys).to include(update_params)
+      #       expect(response_data['id']).to eq(id)
+      #       expect(response_data.keys).to eq(AuthorPresenter.build_attributes)
+      #     end
+      #   end
+
+      #   context 'with invalid parameters' do
+      #     let(:update_params) { { family_name: '' } }
+
+      #     it 'does not update db record and returns an error with details' do
+      #       expect(response).to have_http_status :unprocessable_entity
+      #       author.reload
+      #       expect(author.attributes.symbolize_keys).not_to include(update_params)
+      #       expect(json_body['error']['invalid_params'].symbolize_keys).to include(:family_name)
+      #     end
+      #   end
+
+      #   include_examples 'when resource not exists'
+      # end
     end
   end
 
@@ -296,21 +339,37 @@ RSpec.describe 'Resource Author' do
     let(:author) { create(:author) }
     let(:id) { author.id }
 
-    before { delete "/api/authors/#{id}", headers: }
+    context 'when not authenticated' do
+      before { delete(author_path(id), headers:) }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'when author exists' do
-        it 'deletes the record and returns HTTP status 204' do
-          expect(response).to have_http_status :no_content
-          expect(Author.find_by(id:)).to be_nil
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        delete(author_path(id), headers:)
       end
 
-      include_examples 'when resource not exists'
+      context 'when not authorized' do
+        let(:user) { :user }
+
+        include_examples 'when not authorized'
+      end
+
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'when author exists' do
+          it 'deletes the record and returns HTTP status 204' do
+            expect(response).to have_http_status :no_content
+            expect(Author.find_by(id:)).to be_nil
+          end
+        end
+
+        include_examples 'when resource not exists'
+      end
     end
   end
 end

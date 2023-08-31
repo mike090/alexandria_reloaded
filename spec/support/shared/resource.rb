@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
-shared_examples 'when unauthorized' do
-  context 'without authentication' do
-    it 'returns HTTP status 401 Unauthorized' do
-      expect(response).to have_http_status :unauthorized
-    end
+shared_examples 'when not authenticated' do
+  it 'returns HTTP status 401 Unauthorized' do
+    expect(response).to have_http_status :unauthorized
+  end
+end
+
+shared_examples 'when not authorized' do
+  it 'returns HTTP status 403 Forbidden' do
+    expect(response).to have_http_status :forbidden
   end
 end
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApiKey < ApplicationRecord
+  has_many :access_tokens
+
   attribute :key, default: -> { SecureRandom.hex }
   attribute :active, default: true
 
@@ -14,6 +16,6 @@ class ApiKey < ApplicationRecord
   end
 
   def key=(_value)
-    super SecureRandom.hex unles key?
+    super SecureRandom.hex unless key?
   end
 end

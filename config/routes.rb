@@ -9,6 +9,9 @@ Rails.application.routes.draw do
 
     resources :user_confirmations, only: %i[show create]
     resources :password_resets, only: %i[show create update]
+    resources :access_tokens, only: :create do
+      delete '/', action: :destroy, on: :collection
+    end
 
     get '/search/:text', to: 'search#index'
   end

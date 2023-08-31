@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Resource Book' do
-  let(:headers) { {} }
+  include_context 'headers'
 
   describe 'GET /api/books' do
     let(:books) do
@@ -18,13 +18,19 @@ RSpec.describe 'Resource Book' do
 
     before do
       books
-      get "/api/books#{query}", headers:
     end
 
-    include_examples 'when unauthorized'
+    context 'without authentication' do
+      before { get "#{books_path}#{query}", headers: }
+
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
+      before do
+        authenticate_client
+        get "#{books_path}#{query}", headers:
+      end
 
       describe 'default behavior' do
         it 'returns all resources' do
@@ -198,12 +204,17 @@ RSpec.describe 'Resource Book' do
     let(:book) { create(:book) }
     let(:id) { book.id }
 
-    before { get "/api/books/#{id}", headers: }
+    context 'without authentication' do
+      before { get book_path(id), headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
+      before do
+        authenticate_client
+        get book_path(id), headers:
+      end
 
       context 'when book exists' do
         it 'returns the requested book' do
@@ -221,35 +232,51 @@ RSpec.describe 'Resource Book' do
     let(:params) { { data: book_attributes } }
     let(:book_attributes) { attributes_for(:book).merge(author_id: create(:author).id) }
 
-    before { post '/api/books', params:, headers: }
+    context 'without authentication' do
+      before { post books_path, params:, headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'with valid parameters' do
-        it 'adds a record to db and returns created resource with location' do
-          expect(response).to have_http_status :created
-          created = Book.find_by(**book_attributes)
-          expect(created).not_to be_nil
-          expect(response_data['id']).to eq(created.id)
-          expect(response_data.keys).to eq(BookPresenter.build_attributes)
-          expect(response.headers['Location']).to eq(
-            "http://www.example.com/api/books/#{created.id}"
-          )
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        post books_path, params:, headers:
       end
 
-      context 'with invalid parameters' do
-        let(:book_attributes) { attributes_for(:book).merge(author_id: create(:author).id).merge(title: '') }
+      context 'when not authorized' do
+        let(:user) { :user }
 
-        it 'does not add a record to db, returns HTTP status 422 with error details' do
-          expect(response).to have_http_status :unprocessable_entity
-          expect(Book.find_by(**book_attributes)).to be_nil
-          expect(json_body['error']['invalid_params'].symbolize_keys).to(
-            include(:title)
-          )
+        include_examples 'when not authorized'
+      end
+
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'with valid parameters' do
+          it 'adds a record to db and returns created resource with location' do
+            expect(response).to have_http_status :created
+            created = Book.find_by(**book_attributes)
+            expect(created).not_to be_nil
+            expect(response_data['id']).to eq(created.id)
+            expect(response_data.keys).to eq(BookPresenter.build_attributes)
+            expect(response.headers['Location']).to eq(
+              "http://www.example.com/api/books/#{created.id}"
+            )
+          end
+        end
+
+        context 'with invalid parameters' do
+          let(:book_attributes) { attributes_for(:book).merge(author_id: create(:author).id).merge(title: '') }
+
+          it 'does not add a record to db, returns HTTP status 422 with error details' do
+            expect(response).to have_http_status :unprocessable_entity
+            expect(Book.find_by(**book_attributes)).to be_nil
+            expect(json_body['error']['invalid_params'].symbolize_keys).to(
+              include(:title)
+            )
+          end
         end
       end
     end
@@ -260,35 +287,51 @@ RSpec.describe 'Resource Book' do
     let(:id) { book.id }
     let(:update_params) { { title: 'Updated!' } }
 
-    before { patch "/api/books/#{id}", params: { data: update_params }, headers: }
+    context 'without authentication' do
+      before { patch book_path(id), params: { data: update_params }, headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'with valid parameters' do
-        it 'updates db record and returns updated resource' do
-          expect(response).to have_http_status :ok
-          book.reload
-          expect(book.attributes.symbolize_keys).to include(update_params)
-          expect(response_data['id']).to eq(id)
-          expect(response_data.keys).to eq(BookPresenter.build_attributes)
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        patch book_path(id), params: { data: update_params }, headers:
       end
 
-      context 'with invalid parameters' do
-        let(:update_params) { { title: '' } }
+      context 'when not authorized' do
+        let(:user) { :user }
 
-        it 'does not update db record and returns an error with details' do
-          expect(response).to have_http_status :unprocessable_entity
-          book.reload
-          expect(book.attributes.symbolize_keys).not_to include(update_params)
-          expect(json_body['error']['invalid_params'].symbolize_keys).to include(:title)
-        end
+        include_examples 'when not authorized'
       end
 
-      include_examples 'when resource not exists'
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'with valid parameters' do
+          it 'updates db record and returns updated resource' do
+            expect(response).to have_http_status :ok
+            book.reload
+            expect(book.attributes.symbolize_keys).to include(update_params)
+            expect(response_data['id']).to eq(id)
+            expect(response_data.keys).to eq(BookPresenter.build_attributes)
+          end
+        end
+
+        context 'with invalid parameters' do
+          let(:update_params) { { title: '' } }
+
+          it 'does not update db record and returns an error with details' do
+            expect(response).to have_http_status :unprocessable_entity
+            book.reload
+            expect(book.attributes.symbolize_keys).not_to include(update_params)
+            expect(json_body['error']['invalid_params'].symbolize_keys).to include(:title)
+          end
+        end
+
+        include_examples 'when resource not exists'
+      end
     end
   end
 
@@ -296,21 +339,37 @@ RSpec.describe 'Resource Book' do
     let(:book) { create(:book) }
     let(:id) { book.id }
 
-    before { delete "/api/books/#{id}", headers: }
+    context 'without authentication' do
+      before { delete book_path(id), headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'when book exists' do
-        it 'deletes the record and returns HTTP status 204' do
-          expect(response).to have_http_status :no_content
-          expect(Book.find_by(id:)).to be_nil
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        delete book_path(id), headers:
       end
 
-      include_examples 'when resource not exists'
+      context 'when not authorized' do
+        let(:user) { :user }
+
+        include_examples 'when not authorized'
+      end
+
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'when book exists' do
+          it 'deletes the record and returns HTTP status 204' do
+            expect(response).to have_http_status :no_content
+            expect(Book.find_by(id:)).to be_nil
+          end
+        end
+
+        include_examples 'when resource not exists'
+      end
     end
   end
 end

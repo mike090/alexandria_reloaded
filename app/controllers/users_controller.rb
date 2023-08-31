@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  before_action :authenticate_user, only: %i[index show update destroy]
+  before_action :authorize_action
+
   def index
     users = orchestrate_query(User)
     embed_page_navigation(users)
@@ -40,6 +43,8 @@ class UsersController < ApplicationController
   def user
     @user ||= User.find(params[:id])
   end
+
+  alias resource user
 
   def user_params
     params.require(:data).permit(:email, :password,

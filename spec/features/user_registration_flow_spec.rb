@@ -3,10 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe 'User Registration Flow', type: :request do
-  include_context 'authenticate client'
+  include_context 'headers'
 
   it 'registers and confirm user' do
     # Step 1 user registration
+    authenticate_client
     post(users_path, params: { data: attributes_for(:user) }, headers:)
     expect(response).to have_http_status :created
     user = User.find response.headers['Location'].split('/').last.to_i

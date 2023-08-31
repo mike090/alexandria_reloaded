@@ -4,44 +4,45 @@ require 'rails_helper'
 
 RSpec.describe 'Authentication' do
   describe 'Client Authentication' do
-    before { get '/api/books', headers: }
+    let(:access_token) { create(:access_token) }
+    let(:api_key) { access_token.api_key }
+    let(:token) { access_token.generate_token }
+    let(:headers) { { 'HTTP_AUTHORIZATION' => auth_str } }
 
     context 'with invalid authentication scheme' do
-      let(:headers) { { 'HTTP_AUTHORIZATION' => '' } }
+      let(:auth_str) { "Bearer api_key=#{api_key.id}:#{api_key.key}" }
 
       it 'returns HTTP status 401 Unauthorized' do
+        get(books_path, headers:)
         expect(response).to have_http_status :unauthorized
       end
     end
 
     context 'with valid authentication scheme' do
-      let(:headers) { { 'HTTP_AUTHORIZATION' => "Alexandria-Token api_key=#{api_key.id}:#{api_key.key}" } }
-
       context 'with invalid API Key' do
-        let(:api_key) do
-          instance_double(ApiKey).tap do |key|
-            allow(key).to receive(:id).and_return(1)
-            allow(key).to receive(:key).and_return('fake')
-          end
-        end
+        let(:auth_str) { 'Alexandria-Token api_key=1:fake' }
 
         it 'returns HTTP status 401 Unauthorized' do
+          get(books_path, headers:)
           expect(response).to have_http_status :unauthorized
         end
       end
 
       context 'with disabled API Key' do
-        let(:api_key) { ApiKey.create.tap(&:disable) }
+        let(:auth_str) { "Alexandria-Token api_key=#{api_key.id}:#{api_key.key}" }
 
         it 'returns HTTP status 401 Unauthorized' do
+          api_key.disable
+          get(books_path, headers:)
           expect(response).to have_http_status :unauthorized
         end
       end
 
       context 'with valid API Key' do
-        let(:api_key) { ApiKey.create }
+        let(:auth_str) { "Alexandria-Token api_key=#{api_key.id}:#{api_key.key}" }
 
         it 'returns HTTP status 200 Ok' do
+          get(books_path, headers:)
           expect(response).to have_http_status :ok
         end
       end

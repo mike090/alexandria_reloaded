@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::API
   include Authentication
+  include Authorization
 
   rescue_from QueryBuilderError, with: :builder_error
   rescue_from RepresentationBuilderError, with: :builder_error
@@ -48,12 +49,13 @@ class ApplicationController < ActionController::API
     response.headers['Links'] = navigation_links unless navigation_links.blank?
   end
 
-  def serialize(data)
+  def serialize(data, options = {})
     {
       json: Alexandria::Serializer.new(
         data:,
         params:,
-        actions: %i[pick_fields pick_embeds]
+        actions: %i[pick_fields pick_embeds],
+        options:
       )
     }
   end

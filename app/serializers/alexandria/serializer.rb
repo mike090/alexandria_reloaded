@@ -19,9 +19,9 @@ module Alexandria
 
     def build_data
       if @data.respond_to?(:map)
-        @data.map { |entity| presenter(entity).new(entity, @params).build(@actions) }
+        @data.map { |entity| presenter(entity).new(entity, @params, @options).build(@actions) }
       else
-        presenter(@data).new(@data, @params).build(@actions)
+        presenter(@data).new(@data, @params, @options).build(@actions)
       end
     end
 

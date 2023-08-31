@@ -13,6 +13,7 @@ gem 'kaminari', '~> 1.2.2'
 gem 'pg', '~> 1.4.6'
 gem 'pg_search', '~> 2.3.6'
 gem 'puma', '~> 5.0'
+gem 'pundit', '~> 2.3.1'
 gem 'rails', '~> 7.0.5'
 
 group :development, :test do
@@ -32,6 +33,7 @@ end
 group :test do
   gem 'database_cleaner', '~> 2.0.2'
   gem 'email_spec', '~> 2.2.2'
+  gem 'faker', '~> 3.2.1'
   gem 'shoulda-matchers', '~> 5.3.0'
   gem 'webmock', '~> 3.18.1'
 end

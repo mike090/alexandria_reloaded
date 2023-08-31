@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Resource Publisher' do
-  let(:headers) { {} }
+  include_context 'headers'
 
   describe 'GET /api/publishers' do
     let(:publishers) do
@@ -16,15 +16,19 @@ RSpec.describe 'Resource Publisher' do
     let(:query) { query_params.any? ? "?#{query_params.to_param}" : '' }
     let(:query_params) { {} }
 
-    before do
-      publishers
-      get "/api/publishers#{query}", headers:
+    before { publishers }
+
+    context 'without authentication' do
+      before { get "#{publishers_path}#{query}", headers: }
+
+      include_examples 'when not authenticated'
     end
 
-    include_examples 'when unauthorized'
-
     context 'with authentication' do
-      include_context 'authenticate client'
+      before do
+        authenticate_client
+        get "#{publishers_path}#{query}", headers:
+      end
 
       describe 'default behavior' do
         it 'returns all resources' do
@@ -198,12 +202,17 @@ RSpec.describe 'Resource Publisher' do
     let(:publisher) { create(:publisher) }
     let(:id) { publisher.id }
 
-    before { get "/api/publishers/#{id}", headers: }
+    context 'without authentication' do
+      before { get publisher_path(id), headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
+      before do
+        authenticate_client
+        get publisher_path(id), headers:
+      end
 
       context 'when publisher exists' do
         it 'returns the requested publisher' do
@@ -221,35 +230,51 @@ RSpec.describe 'Resource Publisher' do
     let(:params) { { data: publisher_attributes } }
     let(:publisher_attributes) { attributes_for(:publisher) }
 
-    before { post '/api/publishers', params:, headers: }
+    context 'without authentication' do
+      before { post publishers_path, params:, headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'with valid parameters' do
-        it 'adds a record to db and returns created resource with location' do
-          expect(response).to have_http_status :created
-          created = Publisher.find_by(**publisher_attributes)
-          expect(created).not_to be_nil
-          expect(response_data['id']).to eq(created.id)
-          expect(response_data.keys).to eq(PublisherPresenter.build_attributes)
-          expect(response.headers['Location']).to eq(
-            "http://www.example.com/api/publishers/#{created.id}"
-          )
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        post publishers_path, params:, headers:
       end
 
-      context 'with invalid parameters' do
-        let(:publisher_attributes) { attributes_for(:publisher).merge(name: '') }
+      context 'when not authorized' do
+        let(:user) { :user }
 
-        it 'does not add a record to db, returns HTTP status 422 with error details' do
-          expect(response).to have_http_status :unprocessable_entity
-          expect(Publisher.find_by(**publisher_attributes)).to be_nil
-          expect(json_body['error']['invalid_params'].symbolize_keys).to(
-            include(:name)
-          )
+        include_examples 'when not authorized'
+      end
+
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'with valid parameters' do
+          it 'adds a record to db and returns created resource with location' do
+            expect(response).to have_http_status :created
+            created = Publisher.find_by(**publisher_attributes)
+            expect(created).not_to be_nil
+            expect(response_data['id']).to eq(created.id)
+            expect(response_data.keys).to eq(PublisherPresenter.build_attributes)
+            expect(response.headers['Location']).to eq(
+              "http://www.example.com/api/publishers/#{created.id}"
+            )
+          end
+        end
+
+        context 'with invalid parameters' do
+          let(:publisher_attributes) { attributes_for(:publisher).merge(name: '') }
+
+          it 'does not add a record to db, returns HTTP status 422 with error details' do
+            expect(response).to have_http_status :unprocessable_entity
+            expect(Publisher.find_by(**publisher_attributes)).to be_nil
+            expect(json_body['error']['invalid_params'].symbolize_keys).to(
+              include(:name)
+            )
+          end
         end
       end
     end
@@ -260,35 +285,51 @@ RSpec.describe 'Resource Publisher' do
     let(:id) { publisher.id }
     let(:update_params) { { name: 'Updated!' } }
 
-    before { patch "/api/publishers/#{id}", params: { data: update_params }, headers: }
+    context 'without authentication' do
+      before { patch publisher_path(id), params: { data: update_params }, headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'with valid parameters' do
-        it 'updates db record and returns updated resource' do
-          expect(response).to have_http_status :ok
-          publisher.reload
-          expect(publisher.attributes.symbolize_keys).to include(update_params)
-          expect(response_data['id']).to eq(id)
-          expect(response_data.keys).to eq(PublisherPresenter.build_attributes)
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        patch publisher_path(id), params: { data: update_params }, headers:
       end
 
-      context 'with invalid parameters' do
-        let(:update_params) { { name: '' } }
+      context 'when not authorized' do
+        let(:user) { :user }
 
-        it 'does not update db record and returns an error with details' do
-          expect(response).to have_http_status :unprocessable_entity
-          publisher.reload
-          expect(publisher.attributes.symbolize_keys).not_to include(update_params)
-          expect(json_body['error']['invalid_params'].symbolize_keys).to include(:name)
-        end
+        include_examples 'when not authorized'
       end
 
-      include_examples 'when resource not exists'
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'with valid parameters' do
+          it 'updates db record and returns updated resource' do
+            expect(response).to have_http_status :ok
+            publisher.reload
+            expect(publisher.attributes.symbolize_keys).to include(update_params)
+            expect(response_data['id']).to eq(id)
+            expect(response_data.keys).to eq(PublisherPresenter.build_attributes)
+          end
+        end
+
+        context 'with invalid parameters' do
+          let(:update_params) { { name: '' } }
+
+          it 'does not update db record and returns an error with details' do
+            expect(response).to have_http_status :unprocessable_entity
+            publisher.reload
+            expect(publisher.attributes.symbolize_keys).not_to include(update_params)
+            expect(json_body['error']['invalid_params'].symbolize_keys).to include(:name)
+          end
+        end
+
+        include_examples 'when resource not exists'
+      end
     end
   end
 
@@ -296,21 +337,37 @@ RSpec.describe 'Resource Publisher' do
     let(:publisher) { create(:publisher) }
     let(:id) { publisher.id }
 
-    before { delete "/api/publishers/#{id}", headers: }
+    context 'without authentication' do
+      before { delete publisher_path(id), headers: }
 
-    include_examples 'when unauthorized'
+      include_examples 'when not authenticated'
+    end
 
     context 'with authentication' do
-      include_context 'authenticate client'
-
-      context 'when publisher exists' do
-        it 'deletes the record and returns HTTP status 204' do
-          expect(response).to have_http_status :no_content
-          expect(Publisher.find_by(id:)).to be_nil
-        end
+      before do
+        authenticate_client
+        authenticate_user(user:)
+        delete publisher_path(id), headers:
       end
 
-      include_examples 'when resource not exists'
+      context 'when not authorized' do
+        let(:user) { :user }
+
+        include_examples 'when not authorized'
+      end
+
+      context 'when authorized' do
+        let(:user) { :admin }
+
+        context 'when publisher exists' do
+          it 'deletes the record and returns HTTP status 204' do
+            expect(response).to have_http_status :no_content
+            expect(Publisher.find_by(id:)).to be_nil
+          end
+        end
+
+        include_examples 'when resource not exists'
+      end
     end
   end
 end

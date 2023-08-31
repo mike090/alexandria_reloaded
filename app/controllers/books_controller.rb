@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class BooksController < ApplicationController
+  before_action :authenticate_user, only: %i[create update destroy]
+  before_action :authorize_action
+
   def index
     books = orchestrate_query(Book.all)
     embed_page_navigation(books)
@@ -38,6 +41,8 @@ class BooksController < ApplicationController
   def book
     @book ||= Book.find(params[:id])
   end
+
+  alias resource book
 
   def book_params
     params.require(:data).permit(:title, :subtitle, :isbn_10, :isbn_13,

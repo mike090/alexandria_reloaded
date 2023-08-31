@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'UserConfirmations' do
+  include_context 'headers'
+  before { authenticate_client }
+
   describe 'GET /api/user_confirmations/:confirmation_token' do
     before { get "/api/user_confirmations/#{confirmation_token}" }
 
@@ -45,8 +48,6 @@ RSpec.describe 'UserConfirmations' do
 
   describe 'POST /api/user_confirmations' do
     include ActionMailer::TestHelper
-
-    include_context 'authenticate client'
 
     before { post '/api/user_confirmations', params:, headers: }
 

@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Password Reset Requests' do
-  include_context 'authenticate client'
+  include_context 'headers'
+  before { authenticate_client }
 
   describe 'POST /api/password_resets' do
     before { post password_resets_path, params:, headers: }

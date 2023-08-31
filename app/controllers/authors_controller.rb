@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class AuthorsController < ApplicationController
+  before_action :authenticate_user, only: %i[create update destroy]
+  before_action :authorize_action
+
   def index
     authors = orchestrate_query(Author.all)
     embed_page_navigation(authors)
@@ -38,6 +41,8 @@ class AuthorsController < ApplicationController
   def author
     @author ||= Author.find(params[:id])
   end
+
+  alias resource author
 
   def author_params
     params.require(:data).permit(:given_name, :family_name)
