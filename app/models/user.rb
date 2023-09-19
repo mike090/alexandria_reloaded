@@ -3,6 +3,9 @@
 class User < ApplicationRecord
   has_secure_password
   has_many :access_tokens, dependent: :delete_all
+  has_many :payments
+  has_many :purchases, -> { where status: :confirmed }, class_name: 'Payment'
+  has_many :bought_books, through: :purchases, source: :book
 
   attribute :confirmation_token, default: -> { SecureRandom.hex }
 

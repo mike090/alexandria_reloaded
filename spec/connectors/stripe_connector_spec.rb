@@ -6,12 +6,12 @@ RSpec.describe StripeConnector do
   before { Stripe.api_key ||= ENV.fetch('STRIPE_API_KEY', nil) }
 
   let(:book) { create(:book, price_cents: 299) }
-  let(:purchase) { create(:purchase, book:) }
+  let(:payment) { create(:payment, book:) }
 
-  def charge_with_token(purchase, card)
+  def charge_with_token(payment, card)
     token = Stripe::Token.create(card:)
-    purchase.update_column :token, token['id']
-    StripeConnector.new(purchase).send(:create_charge)
+    payment.update_column :token, token['id']
+    StripeConnector.new(payment).send(:create_charge)
   end
 
   def card(number)
@@ -23,11 +23,11 @@ RSpec.describe StripeConnector do
 
     it 'succeededs' do
       VCR.use_cassette('stripe/valid_card') do
-        charge = charge_with_token(purchase, valid_card)
+        charge = charge_with_token(payment, valid_card)
 
         expect(charge['status']).to eq 'succeeded'
-        expect(purchase.reload.charge_id).to eq charge['id']
-        expect(purchase.status).to eq 'confirmed'
+        expect(payment.reload.charge_id).to eq charge['id']
+        expect(payment.status).to eq 'confirmed'
       end
     end
   end
@@ -37,11 +37,11 @@ RSpec.describe StripeConnector do
 
     it 'declines the card' do
       VCR.use_cassette('stripe/invalid_card') do
-        charge = charge_with_token(purchase, invalid_card)
+        charge = charge_with_token(payment, invalid_card)
 
         expect(charge[:error][:code]).to eq 'card_declined'
-        expect(purchase.reload.error).to eq charge[:error].stringify_keys
-        expect(purchase.status).to eq 'rejected'
+        expect(payment.reload.error).to eq charge[:error].stringify_keys
+        expect(payment.status).to eq 'rejected'
       end
     end
   end

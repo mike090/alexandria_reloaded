@@ -2,7 +2,10 @@
 
 Rails.application.routes.draw do
   scope :api do
-    resources :books, except: :put
+    resources :books, except: :put do
+      get :download, to: 'downloads#show'
+    end
+
     resources :authors, except: :put
     resources :publishers, except: :put
     resources :users, except: :put
@@ -12,7 +15,8 @@ Rails.application.routes.draw do
     resources :access_tokens, only: :create do
       delete '/', action: :destroy, on: :collection
     end
-    resources :purchases, only: %i[index show create]
+    resources :payments, only: %i[index show create]
+    resources :purchases, only: %i[index show]
 
     get '/search/:text', to: 'search#index'
   end

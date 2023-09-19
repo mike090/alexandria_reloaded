@@ -29,6 +29,12 @@ RSpec.describe User do
     end
   end
 
+  describe 'relations' do
+    it { is_expected.to have_many(:payments) }
+    it { is_expected.to have_many(:purchases) }
+    it { is_expected.to have_many(:bought_books).through(:purchases).source(:book) }
+  end
+
   it 'generates a confirmation token' do
     user = described_class.new
     expect(user.confirmation_token).not_to be_nil

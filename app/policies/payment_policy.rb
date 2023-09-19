@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PurchasePolicy < ApplicationPolicy
+class PaymentPolicy < ApplicationPolicy
   def index?
     user
   end

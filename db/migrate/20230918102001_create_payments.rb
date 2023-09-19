@@ -1,6 +1,6 @@
-class CreatePurchases < ActiveRecord::Migration[7.0]
+class CreatePayments < ActiveRecord::Migration[7.0]
   def change
-    create_table :purchases do |t|
+    create_table :payments do |t|
       t.references :book, null: false, foreign_key: true, index: true
       t.references :user, null: false, foreign_key: true
       t.monetize :price
@@ -13,6 +13,6 @@ class CreatePurchases < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :purchases, [:user_id, :book_id]
+    add_index :payments, [:user_id, :book_id]
   end
 end
