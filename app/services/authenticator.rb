@@ -37,7 +37,7 @@ class Authenticator
   end
 
   def compute_access_token
-    return nil unless credentials['access_token']&.all?
+    return nil unless credentials['access_token'].values.all?
 
     user_id = credentials.dig('access_token', 'user_id')
     token = credentials.dig('access_token', 'token')

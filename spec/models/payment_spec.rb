@@ -30,7 +30,7 @@ RSpec.describe Payment do
     expect(duplicate_payment.errors.messages[:book]).to include('has uncompleated payment')
   end
 
-  it 'valid when another payments are completed' do
+  it 'valid when another payments are rejectet' do
     persisted_payment.rejected!
     expect(duplicate_payment).to be_valid
     expect(duplicate_payment.confirmed!).to be_truthy

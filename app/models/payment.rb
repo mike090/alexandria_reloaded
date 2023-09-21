@@ -28,7 +28,7 @@ class Payment < ApplicationRecord
   end
 
   def set_price
-    self.price = book.price if new_record?
+    self.price = book.price
   end
 
   def can_create_duplicated_payment

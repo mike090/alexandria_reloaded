@@ -14,7 +14,7 @@ class PaymentsController < ApplicationController
   end
 
   def create
-    new_payment = Payment.new(payment_params)
+    new_payment = current_user.payments.new(payment_params)
     if new_payment.save
       render serialize(new_payment).merge(status: :created, location: new_payment)
     else
@@ -31,6 +31,6 @@ class PaymentsController < ApplicationController
   alias resource payment
 
   def payment_params
-    @payment_params ||= params.require(:data).permit(:book_id, :token).merge(user_id: current_user.id)
+    @payment_params ||= params.require(:data).permit(:book_id, :token)
   end
 end
