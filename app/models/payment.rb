@@ -6,26 +6,17 @@ class Payment < ApplicationRecord
 
   store :error
   monetize :price_cents
-  enum status: { created: 0, confirmed: 1, rejected: 2 }
+
+  enum status: %i[created confirmed sent rejected], _default: :created
 
   validates :token, presence: true
+  validates :charge_id, presence: true, unless: :created?
+  validates :error, presence: true, if: :rejected?
   validate :can_create_duplicated_payment, on: :create
 
-  before_create :generate_idempotency_key, :set_price
-
-  def confirm!(charge_id)
-    update charge_id:, status: :confirmed
-  end
-
-  def error!(error)
-    update error:, status: :rejected
-  end
+  before_create :set_price
 
   private
-
-  def generate_idempotency_key
-    self.idempotency_key = "#{Time.now}/#{user.id}/#{book.id}"
-  end
 
   def set_price
     self.price = book.price

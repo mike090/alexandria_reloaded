@@ -10,6 +10,7 @@ FactoryBot.define do
     released_on { '2013-09-01' }
     publisher
     author
+    price_cents { 355 }
   end
 
   factory :ruby_on_rails_tutorial, class: 'Book' do
@@ -21,6 +22,7 @@ FactoryBot.define do
     released_on { '2013-05-09' }
     publisher_id { nil }
     author factory: %i[michael_hartl]
+    price_cents { 299 }
   end
 
   factory :agile_web_development, class: 'Book' do
@@ -32,5 +34,6 @@ FactoryBot.define do
     released_on { '2015-10-11' }
     publisher
     author factory: %i[sam_ruby]
+    price_cents { 435 }
   end
 end

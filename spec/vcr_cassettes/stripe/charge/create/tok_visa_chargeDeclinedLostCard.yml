@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/charges
+    body:
+      encoding: UTF-8
+      string: amount=355&currency=USD&source=tok_visa_chargeDeclinedLostCard&metadata[payment_id]=2&description=Charge+for+Ruby+Under+a+Microscope+%28payment+ID%3A+2%29
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/9.1.0
+      Authorization:
+      - Bearer sk_test_51N1OV2L2O6eMjhLxBkY2vpceOIU5aPwOyQnm4tuLLJN4vGCSRzMmAkXDR9WO6ubSbAQKlLr6LYO56MEMXmRF2HU300YYy93pFZ
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_JQSjlqerNz9HXg","request_duration_ms":86}}'
+      Stripe-Version:
+      - '2023-08-16'
+      X-Stripe-Client-User-Agent:
+      - '{"bindings_version":"9.1.0","lang":"ruby","lang_version":"3.2.0 p0 (2022-12-25)","platform":"x86_64-linux","engine":"ruby","publisher":"stripe","uname":"Linux
+        version 6.2.0-33-generic (buildd@lcy02-amd64-073) (x86_64-linux-gnu-gcc-11
+        (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38)
+        #33~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  7 10:33:52 UTC 2","hostname":"LM-PC"}'
+      Idempotency-Key:
+      - d573a7aae50c02bc822e9c12241e0662cc49760c
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 402
+      message: Payment Required
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sun, 24 Sep 2023 09:12:38 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '360'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Idempotency-Key:
+      - d573a7aae50c02bc822e9c12241e0662cc49760c
+      Original-Request:
+      - req_GH9mxjI6stYwC7
+      Request-Id:
+      - req_GH9mxjI6stYwC7
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-08-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |
+        {
+          "error": {
+            "charge": "ch_3NtoMjL2O6eMjhLx0wXuRRzz",
+            "code": "card_declined",
+            "decline_code": "lost_card",
+            "doc_url": "https://stripe.com/docs/error-codes/card-declined",
+            "message": "Your card was declined.",
+            "request_log_url": "https://dashboard.stripe.com/test/logs/req_GH9mxjI6stYwC7?t=1695546757",
+            "type": "card_error"
+          }
+        }
+  recorded_at: Sun, 24 Sep 2023 09:12:38 GMT
+recorded_with: VCR 6.2.0

@@ -10,12 +10,20 @@ FactoryBot.define do
       status { :created }
     end
 
+    trait :sent do
+      status { :sent }
+      charge_id { 'ch_000' }
+    end
+
     trait :confirmed do
       status { :confirmed }
+      charge_id { 'ch_000' }
     end
 
     trait :rejected do
       status { :rejected }
+      charge_id { 'ch_000' }
+      error { { code: 402 } }
     end
   end
 end

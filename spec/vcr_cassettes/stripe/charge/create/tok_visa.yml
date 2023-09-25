@@ -1,0 +1,208 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/charges
+    body:
+      encoding: UTF-8
+      string: amount=355&currency=USD&source=tok_visa&metadata[payment_id]=1&description=Charge+for+Ruby+Under+a+Microscope+%28payment+ID%3A+1%29
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/9.1.0
+      Authorization:
+      - Bearer sk_test_51N1OV2L2O6eMjhLxBkY2vpceOIU5aPwOyQnm4tuLLJN4vGCSRzMmAkXDR9WO6ubSbAQKlLr6LYO56MEMXmRF2HU300YYy93pFZ
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-08-16'
+      X-Stripe-Client-User-Agent:
+      - '{"bindings_version":"9.1.0","lang":"ruby","lang_version":"3.2.0 p0 (2022-12-25)","platform":"x86_64-linux","engine":"ruby","publisher":"stripe","uname":"Linux
+        version 6.2.0-33-generic (buildd@lcy02-amd64-073) (x86_64-linux-gnu-gcc-11
+        (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38)
+        #33~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  7 10:33:52 UTC 2","hostname":"LM-PC"}'
+      Idempotency-Key:
+      - 1fcfde34489aac39a34287511fcbf3bac9622fc1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sun, 24 Sep 2023 09:01:47 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '3340'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Idempotency-Key:
+      - 1fcfde34489aac39a34287511fcbf3bac9622fc1
+      Original-Request:
+      - req_JQSjlqerNz9HXg
+      Request-Id:
+      - req_JQSjlqerNz9HXg
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-08-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "ch_3NtoCEL2O6eMjhLx0FQu13hG",
+          "object": "charge",
+          "amount": 355,
+          "amount_captured": 355,
+          "amount_refunded": 0,
+          "application": null,
+          "application_fee": null,
+          "application_fee_amount": null,
+          "balance_transaction": "txn_3NtoCEL2O6eMjhLx0A2xMphX",
+          "billing_details": {
+            "address": {
+              "city": null,
+              "country": null,
+              "line1": null,
+              "line2": null,
+              "postal_code": null,
+              "state": null
+            },
+            "email": null,
+            "name": null,
+            "phone": null
+          },
+          "calculated_statement_descriptor": "Stripe",
+          "captured": true,
+          "created": 1695546106,
+          "currency": "usd",
+          "customer": null,
+          "description": "Charge for Ruby Under a Microscope (payment ID: 1)",
+          "destination": null,
+          "dispute": null,
+          "disputed": false,
+          "failure_balance_transaction": null,
+          "failure_code": null,
+          "failure_message": null,
+          "fraud_details": {},
+          "invoice": null,
+          "livemode": false,
+          "metadata": {
+            "payment_id": "1"
+          },
+          "on_behalf_of": null,
+          "order": null,
+          "outcome": {
+            "network_status": "approved_by_network",
+            "reason": null,
+            "risk_level": "normal",
+            "risk_score": 43,
+            "seller_message": "Payment complete.",
+            "type": "authorized"
+          },
+          "paid": true,
+          "payment_intent": null,
+          "payment_method": "card_1NtoCEL2O6eMjhLxiAPbee7X",
+          "payment_method_details": {
+            "card": {
+              "amount_authorized": 355,
+              "brand": "visa",
+              "checks": {
+                "address_line1_check": null,
+                "address_postal_code_check": null,
+                "cvc_check": null
+              },
+              "country": "US",
+              "exp_month": 9,
+              "exp_year": 2024,
+              "extended_authorization": {
+                "status": "disabled"
+              },
+              "fingerprint": "yEuyYq9Bn1p8NKNm",
+              "funding": "credit",
+              "incremental_authorization": {
+                "status": "unavailable"
+              },
+              "installments": null,
+              "last4": "4242",
+              "mandate": null,
+              "multicapture": {
+                "status": "unavailable"
+              },
+              "network": "visa",
+              "network_token": {
+                "used": false
+              },
+              "overcapture": {
+                "maximum_amount_capturable": 355,
+                "status": "unavailable"
+              },
+              "three_d_secure": null,
+              "wallet": null
+            },
+            "type": "card"
+          },
+          "receipt_email": null,
+          "receipt_number": null,
+          "receipt_url": "https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xTjFPVjJMMk82ZU1qaEx4KPv1v6gGMgbkJJc911k6LBbwx1SrYU-uv0iaJsxaARPBEBj8v2fnZP_3FqLu-dH8HQzZUPXmFtQ5g6Ge",
+          "refunded": false,
+          "review": null,
+          "shipping": null,
+          "source": {
+            "id": "card_1NtoCEL2O6eMjhLxiAPbee7X",
+            "object": "card",
+            "address_city": null,
+            "address_country": null,
+            "address_line1": null,
+            "address_line1_check": null,
+            "address_line2": null,
+            "address_state": null,
+            "address_zip": null,
+            "address_zip_check": null,
+            "brand": "Visa",
+            "country": "US",
+            "customer": null,
+            "cvc_check": null,
+            "dynamic_last4": null,
+            "exp_month": 9,
+            "exp_year": 2024,
+            "fingerprint": "yEuyYq9Bn1p8NKNm",
+            "funding": "credit",
+            "last4": "4242",
+            "metadata": {},
+            "name": null,
+            "tokenization_method": null,
+            "wallet": null
+          },
+          "source_transfer": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": null,
+          "status": "succeeded",
+          "transfer_data": null,
+          "transfer_group": null
+        }
+  recorded_at: Sun, 24 Sep 2023 09:01:47 GMT
+recorded_with: VCR 6.2.0

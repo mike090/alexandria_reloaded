@@ -90,7 +90,7 @@ RSpec.describe 'PaymentsRequests' do
         end
 
         context 'with valid fields parameter' do
-          let(:fields) { %i[id idempotency_key] }
+          let(:fields) { %i[id price_cents] }
 
           it 'returns only requested fields' do
             expect(response).to have_http_status :ok
@@ -256,7 +256,7 @@ RSpec.describe 'PaymentsRequests' do
             post payments_path, params:, headers:
           end
           expect(response).to have_http_status :created
-          created = Payment.find_by(idempotency_key: response_data['idempotency_key'])
+          created = Payment.find_by(**payment_attributes)
           expect(created).not_to be_nil
           expect(response_data['id']).to eq(created.id)
           expect(response_data.keys).to eq(PaymentPresenter.build_attributes)

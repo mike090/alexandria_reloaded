@@ -1,0 +1,87 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/charges
+    body:
+      encoding: UTF-8
+      string: amount=355&currency=USD&source=tok_visa_chargeDeclinedInsufficientFunds
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/9.1.0
+      Authorization:
+      - Bearer sk_test_51N1OV2L2O6eMjhLxBkY2vpceOIU5aPwOyQnm4tuLLJN4vGCSRzMmAkXDR9WO6ubSbAQKlLr6LYO56MEMXmRF2HU300YYy93pFZ
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_LkJxZSyG06Zduu","request_duration_ms":1}}'
+      Stripe-Version:
+      - '2023-08-16'
+      X-Stripe-Client-User-Agent:
+      - '{"bindings_version":"9.1.0","lang":"ruby","lang_version":"3.2.0 p0 (2022-12-25)","platform":"x86_64-linux","engine":"ruby","publisher":"stripe","uname":"Linux
+        version 6.2.0-33-generic (buildd@lcy02-amd64-073) (x86_64-linux-gnu-gcc-11
+        (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38)
+        #33~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  7 10:33:52 UTC 2","hostname":"LM-PC"}'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 402
+      message: Payment Required
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sun, 24 Sep 2023 13:56:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '379'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Idempotency-Key:
+      - 064ea0f4-3c77-49cb-ab19-3746aa6ddc47
+      Original-Request:
+      - req_4TfiwLejICkm7X
+      Request-Id:
+      - req_4TfiwLejICkm7X
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-08-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |
+        {
+          "error": {
+            "charge": "ch_3NtsnKL2O6eMjhLx1ld0rA0E",
+            "code": "card_declined",
+            "decline_code": "insufficient_funds",
+            "doc_url": "https://stripe.com/docs/error-codes/card-declined",
+            "message": "Your card has insufficient funds.",
+            "request_log_url": "https://dashboard.stripe.com/test/logs/req_4TfiwLejICkm7X?t=1695563782",
+            "type": "card_error"
+          }
+        }
+  recorded_at: Sun, 24 Sep 2023 13:56:23 GMT
+recorded_with: VCR 6.2.0

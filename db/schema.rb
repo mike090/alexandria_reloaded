@@ -70,8 +70,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_102001) do
     t.bigint "user_id", null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
-    t.string "idempotency_key"
-    t.integer "status", default: 0
+    t.integer "status", default: 0, null: false
     t.string "charge_id"
     t.string "token"
     t.text "error", default: "{}"

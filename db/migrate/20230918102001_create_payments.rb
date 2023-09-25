@@ -4,8 +4,7 @@ class CreatePayments < ActiveRecord::Migration[7.0]
       t.references :book, null: false, foreign_key: true, index: true
       t.references :user, null: false, foreign_key: true
       t.monetize :price
-      t.string :idempotency_key
-      t.integer :status, default: 0
+      t.integer :status, null: false, default: 0
       t.string :charge_id
       t.string :token
       t.text :error, default: '{}'

@@ -15,7 +15,7 @@ RSpec.describe PaymentPolicy do
     context 'when admin' do
       let(:scope) { PaymentPolicy::Scope.new(admin, Payment).resolve }
 
-      it 'returns all the purchases' do
+      it 'returns all the payments' do
         expect(scope.count).to eq(Payment.all.count)
       end
     end
@@ -23,7 +23,7 @@ RSpec.describe PaymentPolicy do
     context 'when regular user' do
       let(:scope) { PaymentPolicy::Scope.new(user, Payment).resolve }
 
-      it 'returns only purchases that belong to the user' do
+      it 'returns only payments that belong to the user' do
         expect(scope).to include(user_payment)
         expect(scope).not_to include(admin_payment)
       end
@@ -38,12 +38,12 @@ RSpec.describe PaymentPolicy do
 
   permissions :show? do
     context 'when regular user' do
-      it 'grants access for users purchases' do
+      it 'grants access for users payments' do
         user = User.new
         expect(described_class).to permit(user, Payment.new(user:))
       end
 
-      it 'denies access for another users purchases' do
+      it 'denies access for another users payments' do
         expect(described_class).not_to permit(User.new, Payment.new)
       end
     end
